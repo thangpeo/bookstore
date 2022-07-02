@@ -1,4 +1,4 @@
-import { Box, Button, TextField } from '@mui/material'
+import { Box, Button, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -28,18 +28,17 @@ const Register = ({ onRegisterSuccess }) => {
         resolver: yupResolver(schema),
 
     });
-    const registerAccount = async (data) => {
-        const response = await authApi.register(data)
-        if (response.data) {
+    const [errorMessage, seterrorMessage] = React.useState(null)
+    const onSubmit = async (data) => {
+        try {
+            const response = await authApi.register(data)
             if (onRegisterSuccess) {
                 onRegisterSuccess()
             }
-        }else{
-            
+        } catch (error) {
+            seterrorMessage("Đăng ký thất bại, vui lòng thử lại sau")
         }
-    }
-    const onSubmit = (data) => {
-        registerAccount(data)
+        
     }
     return (
         <Box
@@ -48,6 +47,7 @@ const Register = ({ onRegisterSuccess }) => {
             sx={{
                 p: 2,
             }}>
+            {errorMessage && <Typography>{errorMessage}</Typography>}
             <Controller
                 name='firstName'
                 control={control}
@@ -103,6 +103,7 @@ const Register = ({ onRegisterSuccess }) => {
                 render={({ field }) =>
                     <TextField
                         fullWidth
+                        type={"password"}
                         label="Nhập lại mật khẩu"
                         margin='normal'
                         error={errors.repassword ? true : false}

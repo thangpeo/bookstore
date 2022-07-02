@@ -1,9 +1,9 @@
 import {
   Box,
   Button,
+  Collapse,
   Grid,
   Hidden,
-  IconButton,
   Paper,
   Rating,
   TextField,
@@ -22,17 +22,33 @@ import { addCartItem } from "../../redux/CartSlice";
 import { useNavigate } from "react-router-dom";
 import ProductReviews from "./ProductReviews";
 import InputQuantity from "../InputQuantity";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 const ProductAttributes = ({ title, value }) => {
   return (
     <Box
-      sx={{ display: "flex", mb: 1, "& *": { fontSize: "13px !important" } }}
+      sx={{
+        display: "flex",
+        mb: 1,
+        px: 1,
+        "& *": { fontSize: "13px !important" },
+      }}
     >
-      <Typography
-        sx={{ width: { xs: "50%", sm: "auto", color: grey[700], mr: 1 } }}
+      <Box
+        component={"span"}
+        sx={{
+          width: {
+            xs: "50%",
+            sm: "auto",
+          },
+          color: grey[700],
+          mr: 1,
+          whiteSpace: "nowrap",
+        }}
       >
         {title}:
-      </Typography>
+      </Box>
       <Typography
         sx={{ fontWeight: { xs: "normal", sm: "bold" }, flexGrow: 1 }}
       >
@@ -46,6 +62,13 @@ const ProductView = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   const addToCart = () => {
     dispatch(
       addCartItem({
@@ -59,23 +82,7 @@ const ProductView = ({ product }) => {
     addToCart();
     navigate("/cart");
   };
-
-  // const updateQuantity = (type) => {
-  //   if (type === 'plus') {
-  //     setQuantity(Number(quantity + 1))
-  //   } else {
-  //     setQuantity(quantity - 1 > 1 ? quantity - 1 : 1)
-  //   }
-  // }
   const handleQuantityChange = (e, newValue) => {
-    // const re = /^[0-9\b]+$/;
-
-    // if (e.target.value === '' || re.test(e.target.value)) {
-    //   const newQuantity = Number(e.target.value)
-    //   setQuantity(newQuantity === 0 ? 1 : newQuantity)
-    // } else {
-    //   e.target.value = quantity
-    // }
     setQuantity(newValue);
   };
 
@@ -240,15 +247,26 @@ const ProductView = ({ product }) => {
       </Paper>
       <Paper elevation={1} sx={{ p: 1, my: 1 }}>
         <Typography variant="h6">Mô tả</Typography>
-        <Typography variant="span" component={"div"}>
-          {product.description ? (
-            product.description
-          ) : (
-            <small>
-              <em>(Chưa có mô tả)</em>
-            </small>
-          )}
-        </Typography>
+        <Collapse in={expanded} timeout="auto" collapsedSize={22}>
+          <Typography
+            variant="span"
+            component={"div"}
+            sx={{ fontSize: 14, textIndent: 24 }}
+          >
+            {product.description ? (
+              product.description
+            ) : (
+              <small>
+                <em>(Chưa có mô tả)</em>
+              </small>
+            )}
+          </Typography>
+        </Collapse>
+        {product.description && (
+          <Button sx={{ width: "100%" }} onClick={handleExpandClick}>
+            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </Button>
+        )}
       </Paper>
       <Paper>
         <ProductReviews id={product._id} />

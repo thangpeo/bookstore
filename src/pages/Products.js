@@ -165,6 +165,11 @@ const Products = () => {
       setIsLoading(false);
     };
     fetchProductData(filter);
+    window.scrollTo({
+      behavior: "smooth",
+      left: 0,
+      top: 0,
+    });
   }, [filter, page, type, category, searchParams]);
   useEffect(() => {
     const fetchBrandsProduct = async () => {
@@ -217,7 +222,6 @@ const Products = () => {
                 <CategoryListItem key={index} category={category} />
               ))}
             </List>
-            <CategoryListItem categories={categories} />
           </Paper>
           <Paper>
             {prices && (
@@ -345,7 +349,7 @@ const Products = () => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={9}>
-          <Box>
+          <Paper sx={{ mb: 2, px: 1 }}>
             <Box
               component={"span"}
               sx={{ "&>*": { m: 1 } }}
@@ -365,7 +369,7 @@ const Products = () => {
                   Xóa bộ lọc
                 </Button>
               )}
-          </Box>
+          </Paper>
           {isLoading ? (
             <Box sx={{ textAlign: "center" }}>
               <CircularProgress />

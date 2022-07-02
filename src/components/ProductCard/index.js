@@ -21,7 +21,7 @@ import { addCartItem } from "../../redux/CartSlice";
 const ProductCard = ({ product, ...props }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
-  const rootElement = document.getElementById("root");
+  const bodyElement = document.body;
   const handleClickAddToCart = () => {
     setOpen(true);
     dispatch(
@@ -128,7 +128,7 @@ const ProductCard = ({ product, ...props }) => {
           Thêm vào giỏ hàng
         </Button>
       </Box>
-      <Portal container={rootElement}>
+      <Portal container={bodyElement}>
         <Snackbar
           open={open}
           autoHideDuration={6000}
@@ -138,7 +138,7 @@ const ProductCard = ({ product, ...props }) => {
           <Alert
             onClose={handleClose}
             severity="success"
-            sx={{ width: "100%" }}
+            sx={{ maxWidth: 200 }}
           >
             Đã thêm {product.name} vào giỏ hàng
           </Alert>

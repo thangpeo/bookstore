@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CartDropDown from "./CartDropDown";
 import { DropdownContent, DropdownWrapper } from "../CustomDropdown";
-import { IconButton, useMediaQuery } from "@mui/material";
+import { IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useTheme } from "@mui/system";
 
 const CartMini = () => {
   const [openCartDropdown, setOpenCartDropdown] = useState(false);

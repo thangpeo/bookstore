@@ -100,6 +100,7 @@ const Home = () => {
           <BannerItem key={index} src={item.image} href={item.link} />
         ))}
       </Banner>
+      <ProductCategoryContent categories={categories}/>
       {categories && (
         <SectionProduct
           title={"Top sản phẩm"}

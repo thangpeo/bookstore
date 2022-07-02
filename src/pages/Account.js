@@ -51,7 +51,7 @@ const Account = () => {
           flexDirection: { xs: "column-reverse", sm: "row" },
         }}
       >
-        <Box sx={{ flexBasis: "25%" }}>
+        <Box sx={{ flexBasis: "25%", flexShrink: 0 }}>
           <Paper>
             <Typography
               variant="h5"

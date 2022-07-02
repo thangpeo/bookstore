@@ -13,17 +13,20 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Helmet from "../components/Helmet";
+import dayjs from 'dayjs'
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const userInfo = useSelector((state) => state.auth.userInfo);
   const navigate = useNavigate();
   useEffect(() => {
-    const getOrders = async () => {
-      const response = await orderApi.getAll(userInfo);
-      setOrders(response.data);
-    };
-    getOrders();
+    if (userInfo) {
+      const getOrders = async () => {
+        const response = await orderApi.getAll(userInfo);
+        setOrders(response.data);
+      };
+      getOrders();
+    }
   }, [userInfo]);
 
   const onRowClick = (orderId) => {
@@ -56,7 +59,7 @@ const Order = () => {
                       sx={{ cursor: "pointer" }}
                     >
                       <TableCell>{order._id}</TableCell>
-                      <TableCell>{order.createAt}</TableCell>
+                      <TableCell>{dayjs(order.createAt).format("DD-MM-YYYY")}</TableCell>
                       <TableCell>{order.status}</TableCell>
                       <TableCell>{order.totalPrice}</TableCell>
                     </TableRow>

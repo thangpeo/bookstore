@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -46,7 +46,12 @@ const schema = yup
 const Checkout = () => {
   const [shippingAddress, setShippingAddress] = useState([]);
   const [value, setValue] = useState(0);
+  const formRef = useRef(null);
   const [isDone, setIsDone] = useState(false);
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const { userInfo, isLoggedIn } = useSelector((state) => state.auth);
+
+  const [totalPrice, setTotalPrice] = React.useState(0);
   const dispatch = useDispatch();
 
   const clearCart = () => {
@@ -62,10 +67,10 @@ const Checkout = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: isLoggedIn ? undefined : yupResolver(schema),
     defaultValues: {
       receiverFullName: "",
-      email: "",
+      email: isLoggedIn ? userInfo.username : "",
       phone: "",
       province: "",
       district: "",
@@ -73,10 +78,7 @@ const Checkout = () => {
       address: "",
     },
   });
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  const { userInfo, isLoggedIn } = useSelector((state) => state.auth);
 
-  const [totalPrice, setTotalPrice] = React.useState(0);
   React.useEffect(() => {
     setTotalPrice(
       cartItems.reduce(
@@ -96,35 +98,17 @@ const Checkout = () => {
           items: cartItems,
           username: userInfo.username,
         });
-        console.log({
-          shippingAddress: shippingAddress[value],
+      } else {
+        await userApi.addShippingAddress({
+          ...dataShipping,
+          username: email,
+          isDefault: true,
+        });
+        await orderApi.addOrder({
+          shippingAddress: data,
           items: cartItems,
           username: userInfo.username,
         });
-      } else {
-        const promises = [];
-        promises.push(
-          userApi.addShippingAddress({
-            ...dataShipping,
-            username: email,
-            isDefault: true,
-          })
-        );
-        promises.push(
-          orderApi.addOrder({
-            shippingAddress: data,
-            items: cartItems,
-            username: userInfo.username,
-          })
-        );
-        Promise.all(promises).then((results) => {
-          setIsDone(true);
-        });
-        // console.log({
-        //   shippingAddress: dataShipping,
-        //   items: cartItems,
-        //   username: userInfo.username,
-        // });
       }
     } else {
       await orderApi.addOrder({
@@ -132,15 +116,14 @@ const Checkout = () => {
         items: cartItems,
         username: email,
       });
-      // promises.push(orderApi.addOrder({ shippingAddress: data, items: cartItems, username: email }))
-      // console.log({
-      //   shippingAddress: dataShipping,
-      //   items: cartItems,
-      //   username: email,
-      // });
     }
+    clearCart();
+    setIsDone(true);
   };
-
+  // const handleLoggedSubmit = (e) => {
+  //   e.preventDefautl();
+  //   onSubmit(shippingAddress[value]);
+  // };
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -179,15 +162,14 @@ const Checkout = () => {
       fet();
     }
   }, [shippingAddress, isLoggedIn]);
-
-  if (cartItems.length === 0) {
-    return <Navigate to={"/cart"} replace />;
-  } else if (isDone) {
+  if (isDone) {
     return <Navigate to={"/"} replace />;
+  } else if (cartItems.length === 0) {
+    return <Navigate to={"/cart"} replace />;
   }
   return (
     <Helmet title="Tiến hành thanh toán">
-      <Box component={"form"} onSubmit={handleSubmit(onSubmit)}>
+      <Box component={"form"} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <Paper sx={{ pt: 1, pb: 2, px: 3, my: 2 }}>
           <Typography variant="h6">ĐỊA CHỈ GIAO HÀNG</Typography>
           <Divider />
@@ -202,6 +184,7 @@ const Checkout = () => {
                 {shippingAddress.map((item, index) => {
                   return (
                     <FormControlLabel
+                      key={index}
                       value={index}
                       control={<Radio checked={index === value} />}
                       label={`${item.address} ${item.ward} ${item.district} ${item.province}`}
@@ -235,6 +218,7 @@ const Checkout = () => {
                       size="small"
                       label="Email"
                       margin="dense"
+                      value={isLoggedIn ? userInfo.username : ""}
                       error={errors.email ? true : false}
                       helperText={errors.email?.message}
                       {...field}
@@ -393,7 +377,7 @@ const Checkout = () => {
             <Typography color="error" fontWeight={"bold"} sx={{ mr: 2 }}>
               Tổng số tiền: {numberWithCommas(totalPrice)} VNĐ
             </Typography>
-            <Button type={"submit"} variant="contained" color="error">
+            <Button type={"submit"} variant="contained">
               Thanh toán
             </Button>
           </Box>

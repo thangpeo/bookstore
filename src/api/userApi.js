@@ -17,7 +17,7 @@ const userApi = {
         return apiClient.post("/user/shippingaddress/" + id, { username })
     },
     addShippingAddress: (payload) => {
-        return apiClient.post("/user/shippingaddress", payload)
+        return apiClient.post("/user/shippingaddress/add", payload)
     },
     removeShippingAddress: (id) => {
         return apiClient.delete("/user/shippingaddress/" + id)

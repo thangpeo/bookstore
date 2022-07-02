@@ -8,6 +8,7 @@ import ReviewProduct from "./ReviewProduct";
 
 const ProductReviews = ({ id }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
   const [comments, setComments] = useState([]);
   const [rating, setRating] = useState(0);
@@ -26,12 +27,13 @@ const ProductReviews = ({ id }) => {
   };
   useEffect(() => {
     const fetchCommentsProduct = async (id) => {
-      const response = await ProductApi.getComments(id, { page });
-      if (response.data.length > 0) {
-        setComments(response.data);
-        setRating(response.rating);
-        setTotal(response.total);
-        setTotalPage(response.totalPage);
+      const { data } = await ProductApi.getComments(id, { page });
+      console.log(data);
+      if (data && data.total > 0) {
+        setComments(data.comments);
+        setRating(data.rating);
+        setTotal(data.total);
+        setTotalPage(data.totalPage);
       }
     };
     fetchCommentsProduct(id);
@@ -39,7 +41,7 @@ const ProductReviews = ({ id }) => {
   return (
     <div>
       <Box sx={{ display: "flex" }}>
-        <Box sx={{ textAlign: "center", p: 1, flexBasis : '25%' }}>
+        <Box sx={{ textAlign: "center", p: 1, flexBasis: "25%" }}>
           <Typography sx={{ fontWeight: "bold" }} variant="h6">
             <Typography fontSize={52} variant="span">
               {rating}
@@ -53,11 +55,19 @@ const ProductReviews = ({ id }) => {
           </Typography>
           <Typography>(Tổng {total} lượt đánh giá)</Typography>
         </Box>
-        <Box sx={{flexGrow: 1}}>
+        <Box sx={{ flexGrow: 1 }}>
           {isLoggedIn ? (
-            <ReviewProduct />
+            <ReviewProduct id={id} username={userInfo.username} />
           ) : (
-            <Box sx={{ display: "flex", alignItems:'center', justifyContent: 'center', width: '100%', height: '100%'}}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               Chỉ có thành viên mới có thể viết nhận xét. Vui lòng
               <Button onClick={openLoginModal}> đăng nhập</Button>
               hoặc

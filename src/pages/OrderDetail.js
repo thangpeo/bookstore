@@ -22,7 +22,7 @@ const OrderDetail = () => {
   useEffect(() => {
     const getOrdersDetail = async (username, id) => {
       const response = await orderApi.getOrder(username, id);
-      setOrderItems(response.data);
+      setOrderItems(response.data.items);
     };
     getOrdersDetail(userInfo.username, id);
   }, [userInfo]);

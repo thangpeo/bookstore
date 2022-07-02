@@ -20,6 +20,7 @@ const CategoryListItem = ({ category }) => {
         category && <> <ListItem>
             <ListItemText primary={category.name} onClick={() => navigate(`/products/${category._id}`)}
                 sx={hover}
+                primaryTypographyProps={{fontSize: 16}}
             />
             {
                 category.types && <ListItemIcon onClick={handleClick} sx={hover}>
