@@ -69,8 +69,8 @@ const Banner = ({ children }) => {
     lazyLoad: true,
   };
   return (
-    <Container sx={{ mb: 2 }}>
-      <Box sx={{ px: 5, py: 1, minHeight: '100vh' }}>
+    children && <Container sx={{ mb: 2 }}>
+      <Box sx={{ px: 5, py: 1}}>
         <Carousel {...settings}>{children}</Carousel>
       </Box>
     </Container>

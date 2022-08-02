@@ -7,9 +7,11 @@ const CatalogMenu = ({ nonActiveTab = false }) => {
   const data = useSelector((state) => state.category.data);
 
   return (
-    <Paper elevation={3} sx={{ height: { xs: "100%", sm: "auto" } }}>
-      <CatalogTabs data={data} nonActiveTab={nonActiveTab} />
-    </Paper>
+    data && (
+      <Paper elevation={3} sx={{ height: { xs: "100%", sm: "auto" } }}>
+        <CatalogTabs data={data} nonActiveTab={nonActiveTab} />
+      </Paper>
+    )
   );
 };
 
