@@ -1,6 +1,6 @@
 import axios from 'axios'
 
- const URL = 'http://localhost:5000'
+ const URL = 'https://bookstoreapi123.herokuapp.com'
 
 const axiosClient = axios.create({
     baseURL: URL,
