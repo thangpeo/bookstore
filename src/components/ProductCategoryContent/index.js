@@ -43,7 +43,7 @@ const settingsCarousel = {
 const ProductCategoryContent = ({ categories }) => {
   const slides = 8;
   return (
-    <Paper elevation={2} sx={{ mb: 2 }}>
+    categories && <Paper elevation={2} sx={{ mb: 2 }}>
       <Box
         sx={{
           display: "flex",
